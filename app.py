@@ -373,7 +373,7 @@ def log(message):  # simple wrapper for logging to stdout on heroku
 # app = Flask(__name__)
 
 # bot = Bot(os.environ["PAGE_ACCESS_TOKEN"])
-# PAGE_ACCESS_TOKEN = os.environ.get('PAGE_ACCESS_TOKEN')
+PAGE_ACCESS_TOKEN = os.environ.get('PAGE_ACCESS_TOKEN')
 
 
 # @app.route('/', methods=['GET'])
