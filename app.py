@@ -465,8 +465,14 @@ def set_persistent_menu():
 				"payload":"SHOW_HELP"
 			}]
 		}
-	ENDPOINT = "https://graph.facebook.com/v2.8/me/messenger_profiles?access_token=%s"%(PAGE_ACCESS_TOKEN)
-	r = requests.post(ENDPOINT, headers = headers, data = json.dumps(data))
+	params = {
+		"access_token": os.environ["PAGE_ACCESS_TOKEN"]
+	}
+	headers = {
+		"Content-Type": "application/json"
+	}
+	
+	r = requests.post("https://graph.facebook.com/v2.6/me/messenger_profiles", params=params, headers=headers, data=json.dumps(data))
 	print(r.content)
 
 
