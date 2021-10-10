@@ -465,7 +465,7 @@ def set_persistent_menu():
 				"payload":"SHOW_HELP"
 			}]
 		}
-	ENDPOINT = "https://graph.facebook.com/v2.8/me/thread_settings?access_token=%s"%(PAGE_ACCESS_TOKEN)
+	ENDPOINT = "https://graph.facebook.com/v2.8/me/messenger_profiles?access_token=%s"%(PAGE_ACCESS_TOKEN)
 	r = requests.post(ENDPOINT, headers = headers, data = json.dumps(data))
 	print(r.content)
 
