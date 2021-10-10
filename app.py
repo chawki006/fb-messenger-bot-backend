@@ -472,7 +472,7 @@ def set_persistent_menu():
 		"Content-Type": "application/json"
 	}
 	
-	r = requests.post("https://graph.facebook.com/v2.6/me/messenger_profiles", params=params, headers=headers, data=json.dumps(data))
+	r = requests.post("https://graph.facebook.com/v2.6/me/messenger_profile", params=params, headers=headers, data=json.dumps(data))
 	print(r.content)
 
 
