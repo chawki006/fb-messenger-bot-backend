@@ -450,21 +450,33 @@ def set_persistent_menu():
 	headers = {
 		'Content-Type':'application/json'
 		}
-	data = {
-		"setting_type":"call_to_actions",
-		"thread_state" : "existing_thread",
-		"call_to_actions":[
-			{
-				"type":"web_url",
-				"title":"Meet Asylex",
-				"url":"https://asylex.ch" 
-			},
-			{
-				"type":"postback",
-				"title":"Help",
-				"payload":"SHOW_HELP"
-			}]
-		}
+	persMenu = {
+            "get_started":{"payload":"GET_STARTED_PAYLOAD"},
+            "persistent_menu":[
+            {
+            "locale":"default",
+            "composer_input_disabled":"false",
+            "call_to_actions":[
+              {
+                "title":"Nos categories",
+                "type":"postback",
+                "payload":"CATEGORIES"
+                
+              },
+              {
+                "type":"web_url",
+                "title":"Contactez nous",
+                "url":"http://petershats.parseapp.com/hat-news",
+                "webview_height_ratio":"full"
+              }
+            ]
+          },
+          {
+            "locale":"zh_CN",
+            "composer_input_disabled":"false"
+          }
+        ]
+        }
 	params = {
 		"access_token": os.environ["PAGE_ACCESS_TOKEN"]
 	}
@@ -472,7 +484,7 @@ def set_persistent_menu():
 		"Content-Type": "application/json"
 	}
 	
-	r = requests.post("https://graph.facebook.com/v2.6/me/messenger_profile", params=params, headers=headers, data=json.dumps(data))
+	r = requests.post("https://graph.facebook.com/v2.6/me/messenger_profile", params=params, headers=headers, data=json.dumps(persMenu))
 	print(r.content)
 
 
