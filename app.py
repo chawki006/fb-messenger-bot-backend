@@ -28,7 +28,7 @@ class Message(db.Model):
         self.message = message
 
 
-class User(db.Model):
+class FB_User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String(80), unique=True, nullable=False)
     first_name = db.Column(db.String(80), nullable=False)
@@ -156,7 +156,7 @@ def received_message(event, time):
                 r = requests.get("https://graph.facebook.com/1280776912007353?fields=first_name,last_name,profile_pic",
                                  params=params, headers=headers)
                 json_user = json.loads(r.content)
-                my_user = User(sender_id,
+                my_user = FB_User(sender_id,
                                json_user["first_name"], json_user["last_name"], json_user["profile_pic"])
                 db.session.add(my_user)
                 db.session.commit()
