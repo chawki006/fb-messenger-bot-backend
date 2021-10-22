@@ -485,6 +485,7 @@ def set_persistent_menu(sender_id):
     r = requests.post("https://graph.facebook.com/v2.6/me/messenger_profile",
                       params=params, headers=headers, data=json.dumps(persMenu))
     print("r.content")
+    print(persMenu)
     print(r.content)
 
 
