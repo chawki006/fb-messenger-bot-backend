@@ -26,6 +26,14 @@ class Message(db.Model):
         self.time = time
 
 
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(80), unique=True, nullable=False)
+    first_name = db.Column(db.String(80), nullable=False)
+    last_name = db.Column(db.String(80), nullable=False)
+    profile_pic = db.Column(db.String(80), nullable=False)
+
+
 db.create_all()
 
 
@@ -65,7 +73,8 @@ def webhook():
 
         for entry in data["entry"]:
             for messaging_event in entry["messaging"]:
-                time = datetime.fromtimestamp(messaging_event["timestamp"]/1000)
+                time = datetime.fromtimestamp(
+                    messaging_event["timestamp"]/1000)
 
                 if messaging_event.get("message"):     # someone sent us a message
                     received_message(messaging_event, time)
@@ -98,6 +107,9 @@ def received_message(event, time):
     entry = Message(sender_id, recipient_id, time)
     db.session.add(entry)
     db.session.commit()
+    my_user = User.query().filter(User.user_id == sender_id).first()
+    print("my_user")
+    print(my_user)
     # could receive text or attachment but not both
     if "text" in event["message"]:
         message_text = event["message"]["text"]
