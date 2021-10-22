@@ -175,7 +175,7 @@ def received_message(event, time):
                 r = requests.get(
                     "https://graph.facebook.com/{}".format(recipient_id), params=params, headers=headers)
                 json_page = json.loads(r.content)
-                my_page = FbPage(sender_id, json_page["id"], json_page["name"])
+                my_page = FbPage(json_page["id"], json_page["name"])
                 db.session.add(my_page)
                 db.session.commit()
     elif "attachments" in event["message"]:
