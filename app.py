@@ -10,8 +10,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://nffthvokcyobhu:f4c0d9da0d068825a65a9f624bbde7c86c09901858d41666782ebc4ea2a9cd2c@ec2-34-196-34-142.compute-1.amazonaws.com:5432/d84ffm5uq4bh7e'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = 'secret string'
-
+print("suuuuuuuuuuuuuuuuuuuuuuup")
 db = SQLAlchemy(app)
+print("suuuuuuuuuuuuuuuuuuuuuuup222222222222222")
 
 @app.route('/', methods=['GET'])
 def verify():
