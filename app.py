@@ -470,10 +470,6 @@ def set_persistent_menu():
             {
                 "locale": "default",
                 "composer_input_disabled": "false",
-            },
-            {
-                "locale": "zh_CN",
-                "composer_input_disabled": "false"
             }
         ]
     }
