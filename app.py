@@ -522,4 +522,5 @@ def set_persistent_menu(sender_id):
 # set_persistent_menu()
 # set_greeting_text()
 if __name__ == "__main__":
+    db.create_all()
     app.run(debug=True)
