@@ -13,6 +13,8 @@ app.secret_key = 'secret string'
 print("suuuuuuuuuuuuuuuuuuuuuuup")
 db = SQLAlchemy(app)
 print("suuuuuuuuuuuuuuuuuuuuuuup222222222222222")
+db.create_all()
+print("helloooooo")
 
 
 class People(db.Model):
@@ -522,6 +524,4 @@ def set_persistent_menu(sender_id):
 # set_persistent_menu()
 # set_greeting_text()
 if __name__ == "__main__":
-    db.create_all()
-    print("helloooooo")
     app.run(debug=True)
