@@ -35,6 +35,12 @@ class User(db.Model):
     last_name = db.Column(db.String(80), nullable=False)
     profile_pic = db.Column(db.String(80), nullable=False)
 
+    def __init__(self, user_id, first_name, last_name, profile_pic):
+        self.user_id = user_id
+        self.first_name = first_name
+        self.last_name = last_name
+        self.profile_pic = profile_pic
+
 
 db.create_all()
 
@@ -137,9 +143,23 @@ def received_message(event, time):
             entry = Message(sender_id, recipient_id, time, message_text)
             db.session.add(entry)
             db.session.commit()
-            my_user = User.query.filter_by(user_id = sender_id).first()
-            print("my_user")
+            my_user = User.query.filter_by(user_id=sender_id).first()
             print(my_user)
+            if my_user == None:
+                params = {
+                    "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+                }
+                headers = {
+                    "Content-Type": "application/json"
+                }
+
+                r = requests.get("https://graph.facebook.com/1280776912007353?fields=first_name,last_name,profile_pic",
+                                 params=params, headers=headers)
+                json_user = json.loads(r.content)
+                my_user = User(sender_id,
+                               json_user["first_name"], json_user["last_name"], json_user["profile_pic"])
+                db.session.add(my_user)
+                db.session.commit()
 
     elif "attachments" in event["message"]:
         message_attachments = event["message"]["attachments"]
