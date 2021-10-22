@@ -29,16 +29,6 @@ class Message(db.Model):
 db.create_all()
 
 
-@app.route("/personadd", methods=['POST'])
-def personadd():
-    pname = request.form["pname"]
-    color = request.form["color"]
-    entry = People(pname, color)
-    db.session.add(entry)
-    db.session.commit()
-    return "Hello world", 200
-
-
 @app.route('/', methods=['GET'])
 def verify():
     # when the endpoint is registered as a webhook, it must echo back
