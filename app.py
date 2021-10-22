@@ -481,7 +481,7 @@ def set_persistent_menu(sender_id):
         "Content-Type": "application/json"
     }
 
-    r = requests.post("https://graph.facebook.com/v6.0/me/custom_user_settings",
+    r = requests.post("https://graph.facebook.com/v2.6/me/custom_user_settings",
                       params=params, headers=headers, data=json.dumps(persMenu))
     print("r.content")
     print(r.content)
