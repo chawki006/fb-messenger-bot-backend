@@ -471,7 +471,14 @@ def set_persistent_menu(sender_id):
             {
                 "locale": "default",
                 "composer_input_disabled": "false",
-            }
+                "call_to_actions": [
+                    {
+                        "title": "My Account",
+                        "type": "postback",
+                        "payload": "PAYBILL_PAYLOAD"
+                    }]
+            },
+
         ]
     }
     params = {
