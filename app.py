@@ -64,7 +64,7 @@ def webhook():
     if data["object"] == "page":   # make sure this is a page subscription
 
         for entry in data["entry"]:
-            time = datetime.fromtimestamp(data["time"])
+            time = datetime.fromtimestamp(entry["time"])
             for messaging_event in entry["messaging"]:
 
                 if messaging_event.get("message"):     # someone sent us a message
