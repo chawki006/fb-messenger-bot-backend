@@ -42,6 +42,16 @@ class FbUser(db.Model):
         self.profile_pic = profile_pic
 
 
+class FbPage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    page_id = db.Column(db.String(80), unique=True, nullable=False)
+    page_name = db.Column(db.String(80), nullable=False)
+
+    def __init__(self, page_id, page_name,):
+        self.page_id = page_id
+        self.page_name = page_name
+
+
 db.create_all()
 
 
@@ -145,22 +155,29 @@ def received_message(event, time):
             db.session.commit()
             my_user = FbUser.query.filter_by(user_id=sender_id).first()
             print(my_user)
+            params = {
+                "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+            }
+            headers = {
+                "Content-Type": "application/json"
+            }
             if my_user == None:
-                params = {
-                    "access_token": os.environ["PAGE_ACCESS_TOKEN"]
-                }
-                headers = {
-                    "Content-Type": "application/json"
-                }
 
-                r = requests.get("https://graph.facebook.com/1280776912007353?fields=first_name,last_name,profile_pic",
+                r = requests.get("https://graph.facebook.com/{}?fields=first_name,last_name,profile_pic".format(sender_id),
                                  params=params, headers=headers)
                 json_user = json.loads(r.content)
                 my_user = FbUser(sender_id,
-                               json_user["first_name"], json_user["last_name"], json_user["profile_pic"])
+                                 json_user["first_name"], json_user["last_name"], json_user["profile_pic"])
                 db.session.add(my_user)
                 db.session.commit()
-
+            my_page = FbPage.query.filter_by(page_id=recipient_id).first()
+            if my_page == None:
+                r = requests.get(
+                    "https://graph.facebook.com/{}".format(recipient_id), params=params, headers=headers)
+                json_page = json.loads(r.content)
+                my_page = FbPage(sender_id, json_page["id"], json_page["name"])
+                db.session.add(my_page)
+                db.session.commit()
     elif "attachments" in event["message"]:
         message_attachments = event["message"]["attachments"]
         send_text_message(sender_id, "Message with attachment received")
