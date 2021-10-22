@@ -33,6 +33,7 @@ def personadd():
     entry = People(pname, color)
     db.session.add(entry)
     db.session.commit()
+    return "Hello world", 200
 
 
 @app.route('/', methods=['GET'])
