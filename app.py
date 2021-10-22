@@ -137,7 +137,7 @@ def received_message(event, time):
             entry = Message(sender_id, recipient_id, time, message_text)
             db.session.add(entry)
             db.session.commit()
-            my_user = User.query.filter_by(user_id == sender_id).first()
+            my_user = User.query.filter_by("user_id" == sender_id).first()
             print("my_user")
             print(my_user)
 
