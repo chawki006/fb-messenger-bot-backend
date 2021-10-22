@@ -33,7 +33,7 @@ class User(db.Model):
     user_id = db.Column(db.String(80), unique=True, nullable=False)
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80), nullable=False)
-    profile_pic = db.Column(db.String(80), nullable=False)
+    profile_pic = db.Column(db.String(), nullable=False)
 
     def __init__(self, user_id, first_name, last_name, profile_pic):
         self.user_id = user_id
