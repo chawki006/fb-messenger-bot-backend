@@ -19,6 +19,7 @@ def verify():
 
     return "Hello world", 200
 
+
 @app.route('/webhook', methods=['GET'])
 def verifys():
     # when the endpoint is registered as a webhook, it must echo back
@@ -31,7 +32,7 @@ def verifys():
     return "Hello world", 200
 
 
-@app.route('/', methods=['POST'])   
+@app.route('/', methods=['POST'])
 def webhook():
 
     # endpoint for processing incoming messaging events
@@ -55,7 +56,8 @@ def webhook():
                     pass
                     # received_authentication(messaging_event)
 
-                elif messaging_event.get("postback"):  # user clicked/tapped "postback" button in earlier message
+                # user clicked/tapped "postback" button in earlier message
+                elif messaging_event.get("postback"):
                     received_postback(messaging_event)
 
                 else:    # uknown messaging_event
@@ -66,14 +68,16 @@ def webhook():
 
 def received_message(event):
 
-    sender_id = event["sender"]["id"]        # the facebook ID of the person sending you the message
-    recipient_id = event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
-    
+    # the facebook ID of the person sending you the message
+    sender_id = event["sender"]["id"]
+    # the recipient's ID, which should be your page's facebook ID
+    recipient_id = event["recipient"]["id"]
+
     # could receive text or attachment but not both
     if "text" in event["message"]:
         message_text = event["message"]["text"]
 
-        # parse message_text and give appropriate response   
+        # parse message_text and give appropriate response
         if message_text == 'image' or message_text == 'Image':
             send_image_message(sender_id)
 
@@ -95,11 +99,11 @@ def received_message(event):
         elif message_text == 'share' or message_text == 'Share':
             send_share_message(sender_id)
 
-        else: # default case
+        else:  # default case
             send_text_message(sender_id, "Echo: " + message_text)
 
     elif "attachments" in event["message"]:
-        message_attachments = event["message"]["attachments"]   
+        message_attachments = event["message"]["attachments"]
         send_text_message(sender_id, "Message with attachment received")
 
 
@@ -107,7 +111,8 @@ def received_message(event):
 def send_text_message(recipient_id, message_text):
 
     # encode('utf-8') included to log emojis to heroku logs
-    log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text.encode('utf-8')))
+    log("sending message to {recipient}: {text}".format(
+        recipient=recipient_id, text=message_text.encode('utf-8')))
 
     message_data = json.dumps({
         "recipient": {
@@ -135,7 +140,7 @@ def send_generic_message(recipient_id):
                     "elements": [{
                         "title": "Asylex",
                         "subtitle": "free online legal aid on Swiss asylum law",
-                        "item_url": "https://asylex.ch/",               
+                        "item_url": "https://asylex.ch/",
                         "image_url": "https://media-exp2.licdn.com/mpr/mpr/shrink_200_200/AAEAAQAAAAAAAAr8AAAAJDYyNGU1NWM4LTA4NzYtNGU4Yy1hNmY5LTA3MDAzOWRhZWFkNQ.png",
                         "buttons": [{
                             "type": "web_url",
@@ -149,7 +154,7 @@ def send_generic_message(recipient_id):
                     }, {
                         "title": "Google",
                         "subtitle": "Find all your answers",
-                        "item_url": "https://www.google.com/",               
+                        "item_url": "https://www.google.com/",
                         "image_url": "https://www.google.ch/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
                         "buttons": [{
                             "type": "web_url",
@@ -166,10 +171,11 @@ def send_generic_message(recipient_id):
         }
     })
 
-    log("sending template with choices to {recipient}: ".format(recipient=recipient_id))
+    log("sending template with choices to {recipient}: ".format(
+        recipient=recipient_id))
 
     call_send_api(message_data)
-    
+
 
 def send_image_message(recipient_id):
 
@@ -179,9 +185,9 @@ def send_image_message(recipient_id):
         },
         "message": {
             "attachment": {
-                "type":"image",
-                "payload":{
-                    "url":"https://www.caritas.ch/fileadmin/_processed_/4/c/csm_caritas_news_yc-award_171127_31fa868713.jpg"
+                "type": "image",
+                "payload": {
+                    "url": "https://www.caritas.ch/fileadmin/_processed_/4/c/csm_caritas_news_yc-award_171127_31fa868713.jpg"
                 }
             }
         }
@@ -200,9 +206,9 @@ def send_file_message(recipient_id):
         },
         "message": {
             "attachment": {
-                "type":"file",
-                "payload":{
-                    "url":"https://asylex.ch/docs/asylverfahren_en.pdf"
+                "type": "file",
+                "payload": {
+                    "url": "https://asylex.ch/docs/asylverfahren_en.pdf"
                 }
             }
         }
@@ -221,9 +227,9 @@ def send_audio_message(recipient_id):
         },
         "message": {
             "attachment": {
-                "type":"audio",
-                "payload":{
-                    "url":"http://vochabular.ch/downloads/Audio/Kapitel2/3_Kapitel2_UebungAe_D/1.mp3"
+                "type": "audio",
+                "payload": {
+                    "url": "http://vochabular.ch/downloads/Audio/Kapitel2/3_Kapitel2_UebungAe_D/1.mp3"
                 }
             }
         }
@@ -242,9 +248,9 @@ def send_video_message(recipient_id):
         },
         "message": {
             "attachment": {
-                "type":"video",
-                "payload":{
-                    "url":"http://techslides.com/demos/sample-videos/small.mp4"
+                "type": "video",
+                "payload": {
+                    "url": "http://techslides.com/demos/sample-videos/small.mp4"
                 }
             }
         }
@@ -263,21 +269,21 @@ def send_button_message(recipient_id):
         },
         "message": {
             "attachment": {
-                "type":"template",
-                "payload":{
-                    "template_type":"button",
-                    "text":"What do you want to do next?",
-                    "buttons":[
-                    {
-                        "type":"web_url",
-                        "url":"https://asylex.ch",
-                        "title":"Asylex website"
-                    },
-                    {
-                        "type":"postback",
-                        "title":"Call Postback",
-                        "payload":"Payload for send_button_message()"
-                    }
+                "type": "template",
+                "payload": {
+                    "template_type": "button",
+                    "text": "What do you want to do next?",
+                    "buttons": [
+                        {
+                            "type": "web_url",
+                            "url": "https://asylex.ch",
+                            "title": "Asylex website"
+                        },
+                        {
+                            "type": "postback",
+                            "title": "Call Postback",
+                            "payload": "Payload for send_button_message()"
+                        }
                     ]
                 }
             }
@@ -298,23 +304,23 @@ def send_share_message(recipient_id):
         },
         "message": {
             "attachment": {
-                "type":"template",
-                "payload":{
-                    "template_type":"generic",
-                    "elements":[
-                    {
-                        "title":"Asylex link",
-                        "subtitle":"free online legal aid on Swiss asylum law",
-                        "image_url":"https://media-exp2.licdn.com/mpr/mpr/shrink_200_200/AAEAAQAAAAAAAAr8AAAAJDYyNGU1NWM4LTA4NzYtNGU4Yy1hNmY5LTA3MDAzOWRhZWFkNQ.png",
-                        "buttons":[
+                "type": "template",
+                "payload": {
+                    "template_type": "generic",
+                    "elements": [
                         {
-                            "type":"element_share"
+                            "title": "Asylex link",
+                            "subtitle": "free online legal aid on Swiss asylum law",
+                            "image_url": "https://media-exp2.licdn.com/mpr/mpr/shrink_200_200/AAEAAQAAAAAAAAr8AAAAJDYyNGU1NWM4LTA4NzYtNGU4Yy1hNmY5LTA3MDAzOWRhZWFkNQ.png",
+                            "buttons": [
+                                {
+                                    "type": "element_share"
+                                }
+                            ]
                         }
-                        ]
-                    }    
                     ]
                 }
-        
+
             }
         }
     })
@@ -326,24 +332,30 @@ def send_share_message(recipient_id):
 
 def received_postback(event):
 
-    sender_id = event["sender"]["id"]        # the facebook ID of the person sending you the message
-    recipient_id = event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
+    # the facebook ID of the person sending you the message
+    sender_id = event["sender"]["id"]
+    # the recipient's ID, which should be your page's facebook ID
+    recipient_id = event["recipient"]["id"]
 
     # The payload param is a developer-defined field which is set in a postback
     # button for Structured Messages
     payload = event["postback"]["payload"]
 
-    log("received postback from {recipient} with payload {payload}".format(recipient=recipient_id, payload=payload))
+    log("received postback from {recipient} with payload {payload}".format(
+        recipient=recipient_id, payload=payload))
 
     if payload == 'Get Started':
         # Get Started button was pressed
-        send_text_message(sender_id, "Welcome to the Asylex bot - Anything you type will be echoed back to you, except for the following keywords: image, file, audio, video, button, generic, share.")
+        send_text_message(
+            sender_id, "Welcome to the Asylex bot - Anything you type will be echoed back to you, except for the following keywords: image, file, audio, video, button, generic, share.")
     elif payload == 'Payload for send_button_message()':
-        send_text_message(sender_id, "Welcome to the Asylex bot - Postback was called")
+        send_text_message(
+            sender_id, "Welcome to the Asylex bot - Postback was called")
     else:
         # Notify sender that postback was successful
         # send_text_message(sender_id, "Welcome to the Asylex bot - Anything you type will be echoed back to you, except for the following keywords: image, file, audio, video, button, generic, share.")
         set_persistent_menu()
+
 
 def call_send_api(message_data):
 
@@ -353,8 +365,9 @@ def call_send_api(message_data):
     headers = {
         "Content-Type": "application/json"
     }
-    
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=message_data)
+
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+                      params=params, headers=headers, data=message_data)
     if r.status_code != 200:
         log(r.status_code)
         log(r.text)
@@ -371,6 +384,7 @@ def log(message):  # simple wrapper for logging to stdout on heroku
 # import requests,json
 
 # app = Flask(__name__)
+
 
 # bot = Bot(os.environ["PAGE_ACCESS_TOKEN"])
 PAGE_ACCESS_TOKEN = os.environ.get('PAGE_ACCESS_TOKEN')
@@ -408,22 +422,22 @@ PAGE_ACCESS_TOKEN = os.environ.get('PAGE_ACCESS_TOKEN')
 
 # 					# Echo
 # 					#response = messaging_text
-					
+
 # 					# response = None
 # 					# entity, value = wit_response(messaging_text)
-					
+
 # 					# if entity == 'newstype':
 # 					# 	response = "OK. I will send you {} news".format(str(value))
 # 					# elif entity == 'location':
 # 					# 	response = "OK. So, you live in {0}. I will send you top headlines from {0}".format(str(value))
-					
+
 # 					# if response == None:
 # 					# 	response = "Sorry, I didn't understand"
 
 # 					categories = wit_response(messaging_text)
 # 					elements = get_news_elements(categories)
 # 					bot.send_generic_message(sender_id, elements)
-				
+
 # 				elif messaging_event.get('postback'):
 # 					# HANDLE POSTBACKS HERE
 # 					payload = messaging_event['postback']['payload']
@@ -447,46 +461,32 @@ PAGE_ACCESS_TOKEN = os.environ.get('PAGE_ACCESS_TOKEN')
 # 	print(r.content)
 
 def set_persistent_menu():
-	headers = {
-		'Content-Type':'application/json'
-		}
-	persMenu = {
-            "get_started":{"payload":"GET_STARTED_PAYLOAD"},
-            "persistent_menu":[
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    persMenu = {
+        "get_started": {"payload": "GET_STARTED_PAYLOAD"},
+        "persistent_menu": [
             {
-            "locale":"default",
-            "composer_input_disabled":"false",
-            "call_to_actions":[
-              {
-                "title":"Nos categories",
-                "type":"postback",
-                "payload":"CATEGORIES"
-                
-              },
-              {
-                "type":"web_url",
-                "title":"Contactez nous",
-                "url":"http://petershats.parseapp.com/hat-news",
-                "webview_height_ratio":"full"
-              }
-            ]
-          },
-          {
-            "locale":"zh_CN",
-            "composer_input_disabled":"false"
-          }
+                "locale": "default",
+                "composer_input_disabled": "false",
+            },
+            {
+                "locale": "zh_CN",
+                "composer_input_disabled": "false"
+            }
         ]
-        }
-	params = {
-		"access_token": os.environ["PAGE_ACCESS_TOKEN"]
-	}
-	headers = {
-		"Content-Type": "application/json"
-	}
-	
-	r = requests.post("https://graph.facebook.com/v2.6/me/messenger_profile", params=params, headers=headers, data=json.dumps(persMenu))
-	print(r.content)
+    }
+    params = {
+        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
 
+    r = requests.post("https://graph.facebook.com/v2.6/me/messenger_profile",
+                      params=params, headers=headers, data=json.dumps(persMenu))
+    print(r.content)
 
 
 # def log(message):
@@ -495,6 +495,5 @@ def set_persistent_menu():
 
 # set_persistent_menu()
 # set_greeting_text()
-
 if __name__ == "__main__":
-    app.run(debug = True)
+    app.run(debug=True)
