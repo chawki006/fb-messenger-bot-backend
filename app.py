@@ -354,7 +354,7 @@ def received_postback(event):
     else:
         # Notify sender that postback was successful
         # send_text_message(sender_id, "Welcome to the Asylex bot - Anything you type will be echoed back to you, except for the following keywords: image, file, audio, video, button, generic, share.")
-        set_persistent_menu()
+        set_persistent_menu(sender_id)
 
 
 def call_send_api(message_data):
@@ -460,11 +460,12 @@ PAGE_ACCESS_TOKEN = os.environ.get('PAGE_ACCESS_TOKEN')
 # 	r = requests.post(ENDPOINT, headers = headers, data = json.dumps(data))
 # 	print(r.content)
 
-def set_persistent_menu():
+def set_persistent_menu(sender_id):
     headers = {
         'Content-Type': 'application/json'
     }
     persMenu = {
+        "psid": sender_id,
         "get_started": {"payload": "GET_STARTED_PAYLOAD"},
         "persistent_menu": [
             {
