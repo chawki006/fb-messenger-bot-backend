@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 import sys
 import json
@@ -13,14 +14,16 @@ app.secret_key = 'secret string'
 db = SQLAlchemy(app)
 
 
-class People(db.Model):
+class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    pname = db.Column(db.String(80), unique=True, nullable=False)
-    color = db.Column(db.String(120), nullable=False)
+    sender_id = db.Column(db.String(80), nullable=False)
+    recipient_id = db.Column(db.String(80), nullable=False)
+    time = db.Column(db.DateTime, nullable=False)
 
-    def __init__(self, pname, color):
-        self.pname = pname
-        self.color = color
+    def __init__(self, sender_id, recipient_id, time):
+        self.sender_id = sender_id
+        self.recipient_id = recipient_id
+        self.time = time
 
 
 db.create_all()
@@ -71,10 +74,11 @@ def webhook():
     if data["object"] == "page":   # make sure this is a page subscription
 
         for entry in data["entry"]:
+            time = datetime.datetime.fromtimestamp(data["time"])
             for messaging_event in entry["messaging"]:
 
                 if messaging_event.get("message"):     # someone sent us a message
-                    received_message(messaging_event)
+                    received_message(messaging_event, time)
 
                 elif messaging_event.get("delivery"):  # delivery confirmation
                     pass
@@ -94,13 +98,16 @@ def webhook():
     return "ok", 200
 
 
-def received_message(event):
+def received_message(event, time):
 
     # the facebook ID of the person sending you the message
     sender_id = event["sender"]["id"]
     # the recipient's ID, which should be your page's facebook ID
     recipient_id = event["recipient"]["id"]
 
+    entry = Message(sender_id, recipient_id, time)
+    db.session.add(entry)
+    db.session.commit()
     # could receive text or attachment but not both
     if "text" in event["message"]:
         message_text = event["message"]["text"]
