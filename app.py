@@ -18,12 +18,14 @@ class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.String(80), nullable=False)
     recipient_id = db.Column(db.String(80), nullable=False)
+    message = db.Column(db.String(), nullable=False)
     time = db.Column(db.DateTime, nullable=False)
 
-    def __init__(self, sender_id, recipient_id, time):
+    def __init__(self, sender_id, recipient_id, time, message):
         self.sender_id = sender_id
         self.recipient_id = recipient_id
         self.time = time
+        self.message = message
 
 
 class User(db.Model):
@@ -104,12 +106,6 @@ def received_message(event, time):
     # the recipient's ID, which should be your page's facebook ID
     recipient_id = event["recipient"]["id"]
 
-    entry = Message(sender_id, recipient_id, time)
-    db.session.add(entry)
-    db.session.commit()
-    my_user = User.query().filter(User.user_id == sender_id).first()
-    print("my_user")
-    print(my_user)
     # could receive text or attachment but not both
     if "text" in event["message"]:
         message_text = event["message"]["text"]
@@ -138,6 +134,12 @@ def received_message(event, time):
 
         else:  # default case
             send_text_message(sender_id, "Echo: " + message_text)
+            entry = Message(sender_id, recipient_id, time)
+            db.session.add(entry)
+            db.session.commit()
+            my_user = User.query.filter_by(user_id == sender_id).first()
+            print("my_user")
+            print(my_user)
 
     elif "attachments" in event["message"]:
         message_attachments = event["message"]["attachments"]
