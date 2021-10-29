@@ -55,7 +55,7 @@ class FbPage(db.Model):
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     question = db.Column(db.String(), nullable=False)
-    answers = db.relationship('Address', backref='question', lazy=False)
+    answers = db.relationship('Answer', backref='question', lazy=False)
 
     def __init__(self, question):
         self.question = question
