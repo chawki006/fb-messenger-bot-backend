@@ -251,6 +251,10 @@ def send_text_message(recipient_id, message_text):
 
 def send_generic_message(recipient_id):
     questions = Question.query.filter_by(page_id=recipient_id).all()
+    print("recipient_id")
+    print(recipient_id)
+    print("questions")
+    print(questions)
     questions_buttons = []
     for question in questions:
         questions_buttons.append({
