@@ -250,7 +250,7 @@ def send_text_message(recipient_id, message_text):
 
 
 def send_generic_message(recipient_id, page_id):
-    questions = Question.query.filter_by(page_id=page_id).all()
+    questions = Question.query.filter_by(page_id=page_id).limit(3).all()
     print("recipient_id")
     print(page_id)
     print("questions")
