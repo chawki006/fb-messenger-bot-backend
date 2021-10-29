@@ -99,7 +99,7 @@ def questionadd():
     db.session.add(question_entity)
     db.session.commit()
 
-    return "", 200
+    return question_entity.id, 200
 
 
 @app.route("/answeradd", methods=['POST'])
