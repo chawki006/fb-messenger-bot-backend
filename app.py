@@ -110,7 +110,7 @@ def answeradd():
     db.session.add(answer_entity)
     db.session.commit()
 
-    return "", 200
+    return str(answer_entity.id), 200
 
 
 @app.route('/webhook', methods=['GET'])
