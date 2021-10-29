@@ -200,6 +200,7 @@ def received_message(event, time):
     elif "attachments" in event["message"]:
         message_attachments = event["message"]["attachments"]
         send_text_message(sender_id, "Message with attachment received")
+    set_persistent_menu(sender_id)
 
 
 # Message event functions
@@ -559,13 +560,32 @@ def set_persistent_menu(sender_id):
     headers = {
         'Content-Type': 'application/json'
     }
+    questions = [
+        {
+            "type": "postback",
+            "title": "Question 111111111111111111111111111111111111?",
+            "payload": "1"
+        },
+        {
+            "type": "postback",
+            "title": "Question 2222222222222222222222222222222222?",
+            "payload": "2"
+        },
+        {
+            "type": "postback",
+            "title": "Question 3333333333333333333333?",
+            "payload": "3"
+        },
+    ]
+
     persMenu = {
         "psid": sender_id,
         "get_started": {"payload": "GET_STARTED_PAYLOAD"},
         "persistent_menu": [
             {
                 "locale": "default",
-                "composer_input_disabled": "false"
+                "composer_input_disabled": "false",
+                "call_to_actions": questions
             },
 
         ]
