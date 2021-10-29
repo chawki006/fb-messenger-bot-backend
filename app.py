@@ -563,17 +563,17 @@ def set_persistent_menu(sender_id):
     questions = [
         {
             "type": "postback",
-            "title": "Question 111111111111111111111111111111111111?",
+            "title": "Question 1?",
             "payload": "1"
         },
         {
             "type": "postback",
-            "title": "Question 2222222222222222222222222222222222?",
+            "title": "Question 2?",
             "payload": "2"
         },
         {
             "type": "postback",
-            "title": "Question 3333333333333333333333?",
+            "title": "Question 3?",
             "payload": "3"
         },
     ]
