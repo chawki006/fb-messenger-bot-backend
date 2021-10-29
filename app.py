@@ -189,7 +189,7 @@ def received_message(event, time):
             send_button_message(sender_id)
 
         elif message_text == 'generic' or message_text == 'Generic':
-            send_generic_message(sender_id)
+            send_generic_message(sender_id, recipient_id)
 
         elif message_text == 'share' or message_text == 'Share':
             send_share_message(sender_id)
@@ -249,10 +249,10 @@ def send_text_message(recipient_id, message_text):
     call_send_api(message_data)
 
 
-def send_generic_message(recipient_id):
-    questions = Question.query.filter_by(page_id=recipient_id).all()
+def send_generic_message(recipient_id, page_id):
+    questions = Question.query.filter_by(page_id=page_id).all()
     print("recipient_id")
-    print(recipient_id)
+    print(page_id)
     print("questions")
     print(questions)
     questions_buttons = []
