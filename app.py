@@ -52,6 +52,25 @@ class FbPage(db.Model):
         self.page_name = page_name
 
 
+class Question(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    question = db.Column(db.String(), nullable=False)
+    answers = db.relationship('Address', backref='question', lazy=False)
+
+    def __init__(self, question):
+        self.question = question
+
+
+class Answer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    answer = db.Column(db.String(), nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey('question.id'),
+                            nullable=False)
+
+    def __init__(self, answer):
+        self.answer = answer
+
+
 db.create_all()
 
 
