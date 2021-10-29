@@ -223,7 +223,23 @@ def send_text_message(recipient_id, message_text):
 
 
 def send_generic_message(recipient_id):
-
+    questions = [
+        {
+            "type": "postback",
+            "title": "Question 1?",
+            "payload": "1"
+        },
+        {
+            "type": "postback",
+            "title": "Question 2?",
+            "payload": "2"
+        },
+        {
+            "type": "postback",
+            "title": "Question 3?",
+            "payload": "3"
+        },
+    ]
     message_data = json.dumps({
         "recipient": {
             "id": recipient_id
@@ -234,18 +250,7 @@ def send_generic_message(recipient_id):
                 "payload": {
                     "template_type": "button",
                     "text": "What do you want to do next?",
-                    "buttons": [
-                        {
-                            "type": "postback",
-                            "title": "Question 1111111111111111111111111111",
-                            "payload": "1"
-                        },
-                        {
-                            "type": "postback",
-                            "title": "Question 22222222222222222222222222222222222222",
-                            "payload": "2"
-                        }
-                    ]
+                    "buttons": questions
                 }
             }
         }
@@ -544,23 +549,6 @@ def set_persistent_menu(sender_id):
     headers = {
         'Content-Type': 'application/json'
     }
-    questions = [
-        {
-            "type": "postback",
-            "title": "Question 1?",
-            "payload": "1"
-        },
-        {
-            "type": "postback",
-            "title": "Question 2?",
-            "payload": "2"
-        },
-        {
-            "type": "postback",
-            "title": "Question 3?",
-            "payload": "3"
-        },
-    ]
 
     persMenu = {
         "psid": sender_id,
@@ -568,8 +556,7 @@ def set_persistent_menu(sender_id):
         "persistent_menu": [
             {
                 "locale": "default",
-                "composer_input_disabled": "false",
-                "call_to_actions": questions
+                "composer_input_disabled": "false"
             },
 
         ]
