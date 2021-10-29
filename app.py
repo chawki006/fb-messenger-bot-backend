@@ -46,6 +46,7 @@ class FbPage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     page_id = db.Column(db.String(80), unique=True, nullable=False)
     page_name = db.Column(db.String(80), nullable=False)
+    questions = db.relationship('Question', backref='page', lazy=False)
 
     def __init__(self, page_id, page_name,):
         self.page_id = page_id
@@ -55,10 +56,13 @@ class FbPage(db.Model):
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     question = db.Column(db.String(), nullable=False)
+    page_id = db.Column(db.Integer, db.ForeignKey('page.id'),
+                        nullable=False)
     answers = db.relationship('Answer', backref='question', lazy=False)
 
-    def __init__(self, question):
+    def __init__(self, question, page_id):
         self.question = question
+        self.page_id = page_id
 
 
 class Answer(db.Model):
@@ -67,8 +71,9 @@ class Answer(db.Model):
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'),
                             nullable=False)
 
-    def __init__(self, answer):
+    def __init__(self, answer, question_id):
         self.answer = answer
+        self.question_id = question_id
 
 
 db.create_all()
@@ -84,6 +89,28 @@ def verify():
         return request.args["hub.challenge"], 200
 
     return "Hello world", 200
+
+
+@app.route("/questionadd", methods=['POST'])
+def questionadd():
+    question = request.form["question"]
+    page_id = request.form["page_id"]
+    question_entity = Question(question, page_id)
+    db.session.add(question_entity)
+    db.session.commit()
+
+    return "", 200
+
+
+@app.route("/answeradd", methods=['POST'])
+def answeradd():
+    answer = request.form["answer"]
+    question_id = int(request.form["question_id"])
+    answer_entity = Answer(answer, question_id)
+    db.session.add(answer_entity)
+    db.session.commit()
+
+    return "", 200
 
 
 @app.route('/webhook', methods=['GET'])
@@ -223,23 +250,14 @@ def send_text_message(recipient_id, message_text):
 
 
 def send_generic_message(recipient_id):
-    questions = [
-        {
+    questions = Question.query.filter_by(page_id=recipient_id).all()
+    questions_buttons = []
+    for question in questions:
+        questions_buttons.append({
             "type": "postback",
-            "title": "Question 1111111111111111111111111111111111111111111111?",
-            "payload": "1"
-        },
-        {
-            "type": "postback",
-            "title": "Question 22222222222222222222222222222222222?",
-            "payload": "2"
-        },
-        {
-            "type": "postback",
-            "title": "Question 333333333333333333333333333?",
-            "payload": "3"
-        },
-    ]
+            "title": question.question,
+            "payload": str(question.id)
+        })
     message_data = json.dumps({
         "recipient": {
             "id": recipient_id
@@ -250,7 +268,7 @@ def send_generic_message(recipient_id):
                 "payload": {
                     "template_type": "button",
                     "text": "What do you want to do next?",
-                    "buttons": questions
+                    "buttons": questions_buttons
                 }
             }
         }
