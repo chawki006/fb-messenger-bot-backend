@@ -97,7 +97,8 @@ def verify():
 
 @app.route("/workflows", methods=['GET'])
 def workflows():
-    questions = Question.query.filter_by(previous_answer_id=None).all()
+    page_id = request.args.get("page_id")
+    questions = Question.query.filter_by(previous_answer_id=None, page_id=page_id).all()
     questions_ids = list(map(lambda question: question.id, questions)) 
     return json.dumps(questions_ids)
 
