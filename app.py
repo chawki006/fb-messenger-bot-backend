@@ -105,9 +105,21 @@ def questionget():
     question = Question.query.filter_by(id=int(question_id)).first()
     print(question.answers)
     print(question.question)
+    serialized_question = serialize_question(question)
+    return json.dumps(serialized_question)
 
-    return jsonify(question)
-    
+def serialize_question(question):
+    answers = []
+    for answer in question.answers:
+        answers.append({
+            "answer": answer.answer,
+            "next_question": serialize_question(answer.next_question)
+        })
+    return {
+        "question": question.question,
+        "answers": answers 
+    }
+
 @app.route("/questionadd", methods=['POST'])
 def questionadd():
     question = request.form["question"]
