@@ -102,7 +102,8 @@ def verify():
 def questionget():
     question_id = request.args.get("question_id")
     question = Question.query.filter_by(id=int(question_id)).first()
-    print(question)
+    print(question.answers)
+    print(question.question)
 
     return jsonify(question)
     
