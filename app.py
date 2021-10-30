@@ -95,6 +95,12 @@ def verify():
     return "Hello world", 200
 
 
+@app.route("/workflows", methods=['GET'])
+def workflows():
+    questions = Question.query.filter_by(previous_answer_id=None).all()
+    questions_ids = map(lambda question: question.id, questions) 
+    return json.dumps(questions_ids)
+
 @app.route("/questionget", methods=['GET'])
 def questionget():
     question_id = request.args.get("question_id")
