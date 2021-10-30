@@ -95,6 +95,12 @@ def verify():
     return "Hello world", 200
 
 
+@app.route("/pagesget", methods=['GET'])
+def workflows():
+    pages = FbPage.query.all()
+    pages_ids= list(map(lambda page: page.page_id, pages))
+    return json.dumps(pages_ids)
+
 @app.route("/workflows", methods=['GET'])
 def workflows():
     page_id = request.args.get("page_id")
