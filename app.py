@@ -63,9 +63,10 @@ class Question(db.Model):
     previous_answer_id = db.Column(
         db.Integer, db.ForeignKey('answer.id'), nullable=True)
 
-    def __init__(self, question, page_id):
+    def __init__(self, question, page_id, previous_answer_id):
         self.question = question
         self.page_id = page_id
+        self.previous_answer_id = previous_answer_id
 
 
 class Answer(db.Model):
@@ -100,7 +101,8 @@ def verify():
 def questionadd():
     question = request.form["question"]
     page_id = request.form["page_id"]
-    question_entity = Question(question, page_id)
+    previous_answer_id = request.form.get("previous_answer_id")
+    question_entity = Question(question, page_id, previous_answer_id)
     db.session.add(question_entity)
     db.session.commit()
 
