@@ -106,7 +106,7 @@ def questionget():
     print(question.answers)
     print(question.question)
 
-    return dumps(question)
+    return jsonify(question)
     
 @app.route("/questionadd", methods=['POST'])
 def questionadd():
