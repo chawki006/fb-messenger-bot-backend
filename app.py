@@ -97,6 +97,14 @@ def verify():
     return "Hello world", 200
 
 
+@app.route("/questionget", methods=['POST'])
+def questionadd():
+    question_id = request.args.get("question_id")
+    question = Question.query.filter_by(id=int(question_id)).first()
+    print(question)
+
+    return json.dumps(question.__dict__), 200
+    
 @app.route("/questionadd", methods=['POST'])
 def questionadd():
     question = request.form["question"]
