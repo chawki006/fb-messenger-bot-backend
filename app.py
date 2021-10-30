@@ -636,11 +636,13 @@ def serialize_question(question):
     answers = []
     for answer in question.answers:
         answers.append({
+            "id": answer.id,
             "answer": answer.answer,
             "next_question": serialize_question(answer.next_question)
         })
     return {
         "question": question.question,
+        "id": question.id,
         "answers": answers
     }
 
