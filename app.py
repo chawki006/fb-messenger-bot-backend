@@ -60,8 +60,8 @@ class Question(db.Model):
                         nullable=False)
     answers = db.relationship(
         'Answer', backref='question', lazy=False, foreign_keys='Answer.question_id')
-    previous_answer = db.relationship(
-        'Answer', uselist=False, backref='next_question', lazy=True, foreign_keys='Answer.next_question_id')
+    previous_answer_id = db.Column(
+        db.Integer, db.ForeignKey('answer.id'), nullable=True)
 
     def __init__(self, question, page_id):
         self.question = question
@@ -73,8 +73,8 @@ class Answer(db.Model):
     answer = db.Column(db.String(), nullable=False)
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'),
                             nullable=False)
-    next_question_id = db.Column(
-        db.Integer, db.ForeignKey('question.id'), nullable=True)
+    next_question = db.relationship(
+        'Question', uselist=False, backref='previous_answer', lazy=True, foreign_keys='Question.previous_answer_id')
 
     def __init__(self, answer, question_id):
         self.answer = answer
