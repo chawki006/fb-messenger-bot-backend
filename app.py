@@ -7,6 +7,7 @@ from dataclasses import dataclass
 import requests
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.ext.serializer import loads, dumps
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://nffthvokcyobhu:f4c0d9da0d068825a65a9f624bbde7c86c09901858d41666782ebc4ea2a9cd2c@ec2-34-196-34-142.compute-1.amazonaws.com:5432/d84ffm5uq4bh7e'
@@ -105,7 +106,7 @@ def questionget():
     print(question.answers)
     print(question.question)
 
-    return jsonify(question)
+    return dumps(question)
     
 @app.route("/questionadd", methods=['POST'])
 def questionadd():
