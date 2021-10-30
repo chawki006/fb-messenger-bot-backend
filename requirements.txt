@@ -17,3 +17,4 @@ wit==4.3.0
 gnewsclient==1.1.0
 flask_sqlalchemy==2.5.1
 psycopg2-binary==2.9.1
+flask-cors==3.0.10
