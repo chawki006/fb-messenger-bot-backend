@@ -74,9 +74,9 @@ class Answer(db.Model):
                             nullable=False)
     next_question_id = db.Column(
         db.Integer, db.ForeignKey('question.id'), nullable=True)
-    question = db.relationship("Question", foreign_keys=[question_id])
+    question = db.relationship("Question", foreign_keys='Answer.question_id')
     next_question = db.relationship(
-        "Question", foreign_keys=[next_question_id])
+        "Question", foreign_keys='Answer.next_question_id')
 
     def __init__(self, answer, question_id):
         self.answer = answer
