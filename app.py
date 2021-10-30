@@ -2,9 +2,10 @@ from datetime import datetime
 import os
 import sys
 import json
+from dataclasses import dataclass
 
 import requests
-from flask import Flask, render_template, request, flash
+from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -52,7 +53,7 @@ class FbPage(db.Model):
         self.page_id = page_id
         self.page_name = page_name
 
-
+@dataclass
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     question = db.Column(db.String(), nullable=False)
@@ -68,7 +69,7 @@ class Question(db.Model):
         self.page_id = page_id
         self.previous_answer_id = previous_answer_id
 
-
+@dataclass
 class Answer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     answer = db.Column(db.String(), nullable=False)
@@ -97,13 +98,13 @@ def verify():
     return "Hello world", 200
 
 
-@app.route("/questionget", methods=['POST'])
+@app.route("/questionget", methods=['GET'])
 def questionget():
     question_id = request.args.get("question_id")
     question = Question.query.filter_by(id=int(question_id)).first()
     print(question)
 
-    return json.dumps(question.__dict__), 200
+    return jsonify(question)
     
 @app.route("/questionadd", methods=['POST'])
 def questionadd():
