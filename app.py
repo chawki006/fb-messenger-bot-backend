@@ -52,6 +52,7 @@ class FbPage(db.Model):
         self.page_id = page_id
         self.page_name = page_name
 
+
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     question = db.Column(db.String(), nullable=False)
@@ -66,6 +67,7 @@ class Question(db.Model):
         self.question = question
         self.page_id = page_id
         self.previous_answer_id = previous_answer_id
+
 
 class Answer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -98,15 +100,18 @@ def verify():
 @app.route("/pagesget", methods=['GET'])
 def pagesget():
     pages = FbPage.query.all()
-    pages_ids= list(map(lambda page: page.page_id, pages))
+    pages_ids = list(map(lambda page: page.page_id, pages))
     return json.dumps(pages_ids)
+
 
 @app.route("/workflows", methods=['GET'])
 def workflows():
     page_id = request.args.get("page_id")
-    questions = Question.query.filter_by(previous_answer_id=None, page_id=page_id).all()
-    questions_ids = list(map(lambda question: question.id, questions)) 
+    questions = Question.query.filter_by(
+        previous_answer_id=None, page_id=page_id).all()
+    questions_ids = list(map(lambda question: question.id, questions))
     return json.dumps(questions_ids)
+
 
 @app.route("/questionget", methods=['GET'])
 def questionget():
@@ -116,6 +121,7 @@ def questionget():
     print(question.question)
     serialized_question = serialize_question(question)
     return json.dumps(serialized_question)
+
 
 @app.route("/questionadd", methods=['POST'])
 def questionadd():
@@ -633,12 +639,13 @@ def serialize_question(question):
         })
     return {
         "question": question.question,
-        "answers": answers 
+        "answers": answers
     }
 
 # def log(message):
 # 	print(message)
 # 	sys.stdout.flush()
+
 
 # set_persistent_menu()
 # set_greeting_text()
