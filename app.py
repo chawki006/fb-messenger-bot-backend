@@ -2,12 +2,10 @@ from datetime import datetime
 import os
 import sys
 import json
-from dataclasses import dataclass
 
 import requests
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.ext.serializer import loads, dumps
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://nffthvokcyobhu:f4c0d9da0d068825a65a9f624bbde7c86c09901858d41666782ebc4ea2a9cd2c@ec2-34-196-34-142.compute-1.amazonaws.com:5432/d84ffm5uq4bh7e'
@@ -54,7 +52,6 @@ class FbPage(db.Model):
         self.page_id = page_id
         self.page_name = page_name
 
-@dataclass
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     question = db.Column(db.String(), nullable=False)
@@ -70,7 +67,6 @@ class Question(db.Model):
         self.page_id = page_id
         self.previous_answer_id = previous_answer_id
 
-@dataclass
 class Answer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     answer = db.Column(db.String(), nullable=False)
@@ -107,18 +103,6 @@ def questionget():
     print(question.question)
     serialized_question = serialize_question(question)
     return json.dumps(serialized_question)
-
-def serialize_question(question):
-    answers = []
-    for answer in question.answers:
-        answers.append({
-            "answer": answer.answer,
-            "next_question": serialize_question(answer.next_question)
-        })
-    return {
-        "question": question.question,
-        "answers": answers 
-    }
 
 @app.route("/questionadd", methods=['POST'])
 def questionadd():
@@ -626,6 +610,18 @@ def set_persistent_menu(sender_id):
     print(persMenu)
     print(r.content)
 
+
+def serialize_question(question):
+    answers = []
+    for answer in question.answers:
+        answers.append({
+            "answer": answer.answer,
+            "next_question": serialize_question(answer.next_question)
+        })
+    return {
+        "question": question.question,
+        "answers": answers 
+    }
 
 # def log(message):
 # 	print(message)
