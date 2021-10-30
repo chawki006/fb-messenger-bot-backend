@@ -12,7 +12,7 @@ requests==2.18.4
 requests-toolbelt==0.8.0
 six==1.11.0
 urllib3==1.22
-Werkzeug==0.13
+Werkzeug==0.15.0
 wit==4.3.0
 gnewsclient==1.1.0
 flask_sqlalchemy==2.5.1
