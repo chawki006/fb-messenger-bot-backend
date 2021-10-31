@@ -16,6 +16,7 @@ db = SQLAlchemy(app)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.String(80), nullable=False)
@@ -61,7 +62,7 @@ class Question(db.Model):
     page_id = db.Column(db.String, db.ForeignKey('fb_page.page_id'),
                         nullable=False)
     answers = db.relationship(
-        'Answer', backref='question', lazy=False, foreign_keys='Answer.question_id')
+        'Answer', backref='question', cascade="all",lazy=False, foreign_keys='Answer.question_id')
     previous_answer_id = db.Column(
         db.Integer, db.ForeignKey('answer.id'), nullable=True)
 
@@ -77,7 +78,7 @@ class Answer(db.Model):
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'),
                             nullable=False)
     next_question = db.relationship(
-        'Question', uselist=False, backref='previous_answer', lazy=False, foreign_keys='Question.previous_answer_id')
+        'Question', cascade="all", uselist=False, backref='previous_answer', lazy=False, foreign_keys='Question.previous_answer_id')
 
     def __init__(self, answer, question_id):
         self.answer = answer
@@ -99,6 +100,13 @@ def verify():
     return "Hello world", 200
 
 
+@app.route("/updatequestiontree", methods=['POST'])
+def updatequestiontree():
+    question_tree = json.loads(request.form["tree"])
+    print(question_tree)
+    return 200
+
+
 @app.route("/pagesget", methods=['GET'])
 def pagesget():
     pages = FbPage.query.all()
@@ -113,6 +121,7 @@ def workflows():
         previous_answer_id=None, page_id=page_id).all()
     questions_ids = list(map(lambda question: question.id, questions))
     return json.dumps(questions_ids)
+
 
 @cross_origin()
 @app.route("/questionget", methods=['GET'])
