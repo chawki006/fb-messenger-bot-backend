@@ -674,8 +674,8 @@ def update_tree(question_tree, previous_answer_id):
                     "question_id": int(question_tree["id"])}
             )
         else:
-            answer = Answer(answer["title"], question_tree["id"])
-            db.session.add(answer)
+            answer_entity = Answer(answer["title"], question_tree["id"])
+            db.session.add(answer_entity)
         if answer["children"]:
             update_tree(answer["children"][0], int(answer["id"]))
     db.session.commit()
