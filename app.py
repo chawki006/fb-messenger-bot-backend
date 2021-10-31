@@ -661,14 +661,14 @@ def serialize_question(question):
 
 def update_tree(question_tree, previous_answer_id):
     Question.query.filter_by(id=int(question_tree["id"])).update(
-        {"question": question_tree["title"], "page_id": question_tree["page_id"], "previous_answer_id": int(previous_answer_id)})
+        {"question": question_tree["title"], "page_id": question_tree["page_id"], "previous_answer_id": previous_answer_id})
     for answer in question_tree["children"]:
         Answer.query.filter_by(id=int(answer["id"])).update(
             {"answer": answer["title"],
                 "question_id": int(question_tree["id"])}
         )
         if answer["children"]:
-            update_tree(answer["children"], answer["id"])
+            update_tree(answer["children"], int(answer["id"]))
 
 
 # def log(message):
