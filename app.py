@@ -62,7 +62,7 @@ class Question(db.Model):
     page_id = db.Column(db.String, db.ForeignKey('fb_page.page_id'),
                         nullable=False)
     answers = db.relationship(
-        'Answer', backref='question', cascade="all",lazy=False, foreign_keys='Answer.question_id')
+        'Answer', backref='question', cascade="all", lazy=False, foreign_keys='Answer.question_id')
     previous_answer_id = db.Column(
         db.Integer, db.ForeignKey('answer.id'), nullable=True)
 
@@ -99,11 +99,13 @@ def verify():
 
     return "Hello world", 200
 
+
 @cross_origin()
 @app.route("/updatequestiontree", methods=['POST'])
 def updatequestiontree():
     question_tree = json.loads(request.get_data())
     print(question_tree)
+    update_tree(question_tree)
     return "", 200
 
 
@@ -652,8 +654,22 @@ def serialize_question(question):
     return {
         "question": question.question,
         "id": question.id,
-        "answers": answers
+        "answers": answers,
+        "page_id": question.page_id
     }
+
+
+def update_tree(question_tree, previous_answer_id):
+    Question.query.filter_by(id=int(question_tree["id"])).update(
+        {"question": question_tree["title"], "page_id": question_tree["page_id"], "previous_answer_id": int(previous_answer_id)})
+    for answer in question_tree["children"]:
+        Answer.query.filter_by(id=int(answer["id"])).update(
+            {"answer": answer["title"],
+                "question_id": int(question_tree["id"])}
+        )
+        if answer["children"]:
+            update_tree(answer["children"], answer["id"])
+
 
 # def log(message):
 # 	print(message)
