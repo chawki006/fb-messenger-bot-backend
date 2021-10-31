@@ -105,7 +105,7 @@ def verify():
 def updatequestiontree():
     question_tree = json.loads(request.get_data())
     print(question_tree)
-    update_tree(question_tree)
+    update_tree(question_tree, None)
     return "", 200
 
 
