@@ -104,7 +104,7 @@ def verify():
 def updatequestiontree():
     question_tree = json.loads(request.form["tree"])
     print(question_tree)
-    return 200
+    return "", 200
 
 
 @app.route("/pagesget", methods=['GET'])
