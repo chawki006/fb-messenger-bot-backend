@@ -65,7 +65,7 @@ class Question(db.Model):
         'Answer', backref='question', cascade="all, delete-orphan",
         lazy=False, foreign_keys='Answer.question_id')
     previous_answer_id = db.Column(
-        db.Integer, db.ForeignKey('answer.id'), nullable=True)
+        db.Integer, db.ForeignKey('answer.id'),ondelete="cascade", nullable=True)
 
     def __init__(self, question, page_id, previous_answer_id):
         self.question = question
@@ -76,7 +76,7 @@ class Question(db.Model):
 class Answer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     answer = db.Column(db.String(), nullable=False)
-    question_id = db.Column(db.Integer, db.ForeignKey('question.id'),
+    question_id = db.Column(db.Integer, db.ForeignKey('question.id', ondelete="cascade"),
                             nullable=False)
     next_question = db.relationship(
         'Question', cascade="all, delete-orphan", uselist=False, backref='previous_answer',
