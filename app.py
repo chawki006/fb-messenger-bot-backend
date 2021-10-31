@@ -132,8 +132,6 @@ def workflows():
 def questionget():
     question_id = request.args.get("question_id")
     question = Question.query.filter_by(id=int(question_id)).first()
-    print(question.answers)
-    print(question.question)
     serialized_question = serialize_question(question)
     return json.dumps(serialized_question)
 
