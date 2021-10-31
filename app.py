@@ -663,7 +663,7 @@ def serialize_question(question):
 
 
 def update_tree(question_tree, previous_answer_id):
-    removed_nodes = question_tree.get('removedNodes')
+    removed_nodes = question_tree.get('removedNodes') if question_tree.get('removedNodes') else [] 
     for node in removed_nodes:
         if node["type"] == "Q":
             Question.query.filter_by(id=node["id"]).delete()
