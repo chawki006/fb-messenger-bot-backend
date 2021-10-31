@@ -668,10 +668,10 @@ def update_tree(question_tree, previous_answer_id):
     for node in removed_nodes:
         if node["type"] == "Q":
             question = db.session.query(Question).filter(
-                Question.id == node["id"])
+                Question.id == node["id"]).first()
             db.session.delete(question)
         else:
-            answer = db.session.query(Answer).filter(Answer.id == node["id"])
+            answer = db.session.query(Answer).filter(Answer.id == node["id"]).first()
             db.session.delete(answer)
     if question_tree.get("id"):
         Question.query.filter_by(id=int(question_tree["id"])).update(
