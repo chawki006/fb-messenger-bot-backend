@@ -645,6 +645,8 @@ def set_persistent_menu(sender_id):
 
 def serialize_question(question):
     answers = []
+    if not question:
+        return None
     if question.answers:
         for answer in question.answers:
             answers.append({
