@@ -670,7 +670,7 @@ def update_tree(question_tree, previous_answer_id):
         if answer["children"]:
             update_tree(answer["children"][0], int(answer["id"]))
 
-
+    db.session.commit()
 # def log(message):
 # 	print(message)
 # 	sys.stdout.flush()
