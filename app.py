@@ -62,7 +62,8 @@ class Question(db.Model):
     page_id = db.Column(db.String, db.ForeignKey('fb_page.page_id'),
                         nullable=False)
     answers = db.relationship(
-        'Answer', backref='question', cascade="all", lazy=False, foreign_keys='Answer.question_id')
+        'Answer', backref='question', cascade="all, delete-orphan",
+        lazy=False, foreign_keys='Answer.question_id')
     previous_answer_id = db.Column(
         db.Integer, db.ForeignKey('answer.id'), nullable=True)
 
@@ -78,7 +79,8 @@ class Answer(db.Model):
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'),
                             nullable=False)
     next_question = db.relationship(
-        'Question', cascade="all", uselist=False, backref='previous_answer', lazy=False, foreign_keys='Question.previous_answer_id')
+        'Question', cascade="all, delete-orphan", uselist=False, backref='previous_answer',
+        lazy=False, foreign_keys='Question.previous_answer_id')
 
     def __init__(self, answer, question_id):
         self.answer = answer
@@ -663,7 +665,8 @@ def serialize_question(question):
 
 
 def update_tree(question_tree, previous_answer_id):
-    removed_nodes = question_tree.get('removedNodes') if question_tree.get('removedNodes') else [] 
+    removed_nodes = question_tree.get(
+        'removedNodes') if question_tree.get('removedNodes') else []
     for node in removed_nodes:
         if node["type"] == "Q":
             Question.query.filter_by(id=node["id"]).delete()
