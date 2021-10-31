@@ -663,6 +663,12 @@ def serialize_question(question):
 
 
 def update_tree(question_tree, previous_answer_id):
+    removed_nodes = question_tree["removed_nodes"]
+    for node in removed_nodes:
+        if node["type"] == "Q":
+            Question.query.filter_by(id=node["id"]).delete()
+        else:
+            Answer.query.filter_by(id=node["id"]).delete()
     if question_tree.get("id"):
         Question.query.filter_by(id=int(question_tree["id"])).update(
             {"question": question_tree["title"], "page_id": question_tree["page_id"], "previous_answer_id": previous_answer_id})
