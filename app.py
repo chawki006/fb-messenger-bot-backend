@@ -668,7 +668,7 @@ def update_tree(question_tree, previous_answer_id):
                 "question_id": int(question_tree["id"])}
         )
         if answer["children"]:
-            update_tree(answer["children"], int(answer["id"]))
+            update_tree(answer["children"][0], int(answer["id"]))
 
 
 # def log(message):
