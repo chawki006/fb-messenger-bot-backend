@@ -660,17 +660,27 @@ def serialize_question(question):
 
 
 def update_tree(question_tree, previous_answer_id):
-    Question.query.filter_by(id=int(question_tree["id"])).update(
-        {"question": question_tree["title"], "page_id": question_tree["page_id"], "previous_answer_id": previous_answer_id})
+    if question_tree.get("id"):
+        Question.query.filter_by(id=int(question_tree["id"])).update(
+            {"question": question_tree["title"], "page_id": question_tree["page_id"], "previous_answer_id": previous_answer_id})
+    else:
+        question = Question(
+            question_tree["title"], question_tree["page_id"], previous_answer_id)
+        db.add(question)
     for answer in question_tree["children"]:
-        Answer.query.filter_by(id=int(answer["id"])).update(
-            {"answer": answer["title"],
-                "question_id": int(question_tree["id"])}
-        )
+        if answer.get("id"):
+            Answer.query.filter_by(id=int(answer["id"])).update(
+                {"answer": answer["title"],
+                    "question_id": int(question_tree["id"])}
+            )
+        else:
+            answer = Answer(answer["title"], question_tree["id"])
+            db.add(answer)
         if answer["children"]:
             update_tree(answer["children"][0], int(answer["id"]))
-
     db.session.commit()
+
+
 # def log(message):
 # 	print(message)
 # 	sys.stdout.flush()
