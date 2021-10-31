@@ -667,9 +667,11 @@ def update_tree(question_tree, previous_answer_id):
         'removedNodes') if question_tree.get('removedNodes') else []
     for node in removed_nodes:
         if node["type"] == "Q":
-            Question.query.filter_by(id=node["id"]).delete()
+            question = db.session.query(Question).filter(id=node["id"])
+            db.session.delete(question)
         else:
-            Answer.query.filter_by(id=node["id"]).delete()
+            answer = db.session.query(Answer).filter(id=node["id"])
+            db.session.delete(answer)
     if question_tree.get("id"):
         Question.query.filter_by(id=int(question_tree["id"])).update(
             {"question": question_tree["title"], "page_id": question_tree["page_id"], "previous_answer_id": previous_answer_id})
