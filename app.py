@@ -99,7 +99,7 @@ def verify():
 
     return "Hello world", 200
 
-
+@cross_origin()
 @app.route("/updatequestiontree", methods=['POST'])
 def updatequestiontree():
     question_tree = json.loads(request.form["tree"])
