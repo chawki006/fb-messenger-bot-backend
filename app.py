@@ -645,12 +645,13 @@ def set_persistent_menu(sender_id):
 
 def serialize_question(question):
     answers = []
-    for answer in question.answers:
-        answers.append({
-            "id": answer.id,
-            "answer": answer.answer,
-            "next_question": serialize_question(answer.next_question)
-        })
+    if question.answers:
+        for answer in question.answers:
+            answers.append({
+                "id": answer.id,
+                "answer": answer.answer,
+                "next_question": serialize_question(answer.next_question)
+            })
     return {
         "question": question.question,
         "id": question.id,
