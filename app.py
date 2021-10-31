@@ -679,6 +679,8 @@ def update_tree(question_tree, previous_answer_id):
         question = Question(
             question_tree["title"], question_tree["page_id"], previous_answer_id)
         db.session.add(question)
+        db.session.commit()
+        question_tree["id"] = question.id
     for answer in question_tree["children"]:
         if answer.get("id"):
             Answer.query.filter_by(id=int(answer["id"])).update(
@@ -688,6 +690,8 @@ def update_tree(question_tree, previous_answer_id):
         else:
             answer_entity = Answer(answer["title"], question_tree["id"])
             db.session.add(answer_entity)
+            db.session.commit()
+            answer["id"]= answer_entity.id
         if answer.get("children"):
             update_tree(answer["children"][0], int(answer["id"]))
     db.session.commit()
