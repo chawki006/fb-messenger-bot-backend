@@ -686,6 +686,7 @@ def update_tree(question_tree, previous_answer_id):
         db.session.commit()
         question_tree["id"] = question.id
     if not question_tree.get("children"):
+        print(question_tree)
         return None
     for answer in question_tree["children"]:
         if answer.get("id"):
