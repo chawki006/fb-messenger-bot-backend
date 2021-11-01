@@ -248,7 +248,6 @@ def received_message(event, time):
             db.session.add(entry)
             db.session.commit()
             my_user = FbUser.query.filter_by(user_id=sender_id).first()
-            print(my_user)
             params = {
                 "access_token": os.environ["PAGE_ACCESS_TOKEN"]
             }
@@ -299,10 +298,6 @@ def send_text_message(recipient_id, message_text):
 
 def send_generic_message(recipient_id, page_id):
     questions = Question.query.filter_by(page_id=page_id).limit(3).all()
-    print("recipient_id")
-    print(page_id)
-    print("questions")
-    print(questions)
     questions_buttons = []
     for question in questions:
         questions_buttons.append({
@@ -640,10 +635,6 @@ def set_persistent_menu(sender_id):
 
     r = requests.post("https://graph.facebook.com/v2.6/me/custom_user_settings",
                       params=params, headers=headers, data=json.dumps(persMenu))
-    print("r.content")
-    print(persMenu)
-    print(r.content)
-
 
 def serialize_question(question):
     answers = []
@@ -686,9 +677,6 @@ def update_tree(question_tree, previous_answer_id):
         db.session.commit()
         question_tree["id"] = question.id
     if not question_tree.get("children"):
-        print("question_tree")
-        print(question_tree)
-        print("question_tree)")
         return None
     for answer in question_tree["children"]:
         if answer.get("id"):
