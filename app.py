@@ -704,6 +704,7 @@ def update_tree(question_tree, previous_answer_id):
         if answer.get("children"):
             update_tree(answer["children"][0], int(answer["id"]))
     db.session.commit()
+    return True
 
 
 # def log(message):
