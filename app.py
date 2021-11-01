@@ -652,7 +652,8 @@ def serialize_question(question):
             answers.append({
                 "id": answer.id,
                 "answer": answer.answer,
-                "next_question": serialize_question(answer.next_question)
+                "next_question": serialize_question(answer.next_question),
+                "page_id": question.page_id
             })
     return {
         "question": question.question,
