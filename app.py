@@ -107,7 +107,9 @@ def verify():
 def updatequestiontree():
     question_tree = json.loads(request.get_data())
     print(question_tree)
-    update_tree(question_tree, None)
+    result = update_tree(question_tree, None)
+    if not result:
+        return "Question Doesn't have answers!", 400
     return "", 200
 
 
@@ -683,6 +685,8 @@ def update_tree(question_tree, previous_answer_id):
         db.session.add(question)
         db.session.commit()
         question_tree["id"] = question.id
+    if not question_tree.get("children"):
+        return None
     for answer in question_tree["children"]:
         if answer.get("id"):
             Answer.query.filter_by(id=int(answer["id"])).update(
