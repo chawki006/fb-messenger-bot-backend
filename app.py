@@ -622,7 +622,7 @@ def set_persistent_menu(sender_id):
             {
                 "locale": "default",
                 "composer_input_disabled": "false"
-            },
+            }
 
         ]
     }
@@ -635,6 +635,7 @@ def set_persistent_menu(sender_id):
 
     r = requests.post("https://graph.facebook.com/v2.6/me/custom_user_settings",
                       params=params, headers=headers, data=json.dumps(persMenu))
+    print(r.content)
 
 def serialize_question(question):
     answers = []
