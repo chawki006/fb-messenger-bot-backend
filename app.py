@@ -244,11 +244,12 @@ def received_message(event, time):
 
         else:  # default case
             # send_text_message(sender_id, "Echo: " + message_text)
-            send_quick_reply_message(sender_id)
             question = db.session.query(Question).filter(
                 Question.page_id == recipient_id).filter(
                 Question.previous_answer_id == None).first()
-            print(question.question)
+            answers = list(map(lambda answer: (answer.answer, answer.id),
+                           Answer.query.filter_by(question_id=question.id).all()))
+            send_quick_reply_message(sender_id, question.question,answers)
             entry = Message(sender_id, recipient_id, time, message_text)
             db.session.add(entry)
             db.session.commit()
@@ -332,26 +333,23 @@ def send_generic_message(recipient_id, page_id):
     call_send_api(message_data)
 
 
-def send_quick_reply_message(recipient_id):
+def send_quick_reply_message(recipient_id, question, replies):
+    formated_replies = []
+    for reply in replies:
+        formated_replies.append({
+            "content_type": "text",
+            "title": reply[0],
+            "payload": reply[1],
+            "image_url": "https://img.favpng.com/8/23/7/computer-icons-circle-clip-art-png-favpng-cq2GiWy6Z5sneQbb7PhNB8WN8.jpg"
+
+        })
     message_data = json.dumps({
         "recipient": {
             "id": recipient_id
         },
         "message": {
-            "text": "Pick a color:",
-            "quick_replies": [
-                {
-                    "content_type": "text",
-                    "title": "Red",
-                    "payload": "Red_PAYLOAD",
-                    "image_url": "https://toppng.com/uploads/preview/red-circle-116095751776ly7ywg032.png"
-                }, {
-                    "content_type": "text",
-                    "title": "Green",
-                    "payload": "Green_PAYLOAD",
-                    "image_url": "https://banner2.cleanpng.com/20180406/pfq/kisspng-logo-raivill-invent-green-circle-5ac79e639698a6.3860305315230316516169.jpg"
-                }
-            ]
+            "text": question,
+            "quick_replies": formated_replies
         }
     })
 
