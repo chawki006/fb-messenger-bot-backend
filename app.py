@@ -565,9 +565,10 @@ def received_postback(event):
             sender_id, "Welcome to the Asylex bot - Postback was called")
     else:
         next_question = Question.query.filter_by(previous_answer_id=int(payload)).first()
-        answers = list(map(lambda answer: (answer.answer, answer.id),
-                Answer.query.filter_by(question_id=next_question.id).all()))
-        send_buttons_message(sender_id, next_question.question, answers)
+        if  next_question: 
+            answers = list(map(lambda answer: (answer.answer, answer.id),
+                    Answer.query.filter_by(question_id=next_question.id).all()))
+            send_buttons_message(sender_id, next_question.question, answers)
         # Notify sender that postback was successful
         # send_text_message(sender_id, "Welcome to the Asylex bot - Anything you type will be echoed back to you, except for the following keywords: image, file, audio, video, button, generic, share.")
         set_persistent_menu(sender_id)
