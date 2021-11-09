@@ -7,6 +7,7 @@ import requests
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS, cross_origin
+from sqlalchemy.sql.elements import Null
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://nffthvokcyobhu:f4c0d9da0d068825a65a9f624bbde7c86c09901858d41666782ebc4ea2a9cd2c@ec2-34-196-34-142.compute-1.amazonaws.com:5432/d84ffm5uq4bh7e'
@@ -245,6 +246,10 @@ def received_message(event, time):
         else:  # default case
             # send_text_message(sender_id, "Echo: " + message_text)
             send_quick_reply_message(sender_id)
+            question = db.session.query(Question).filter(
+                Question.page_id == recipient_id).filter(
+                Question.previous_answer_id == Null).first()
+            print(question.question)
             entry = Message(sender_id, recipient_id, time, message_text)
             db.session.add(entry)
             db.session.commit()
