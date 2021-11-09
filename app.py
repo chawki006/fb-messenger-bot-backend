@@ -340,12 +340,12 @@ def send_quick_reply_message(recipient_id):
                     "content_type": "text",
                     "title": "Red",
                     "payload": "Red_PAYLOAD",
-                    "image_url": "http://example.com/img/red.png"
+                    "image_url": "https://toppng.com/uploads/preview/red-circle-116095751776ly7ywg032.png"
                 }, {
                     "content_type": "text",
                     "title": "Green",
                     "payload": "Green_PAYLOAD",
-                    "image_url": "http://example.com/img/green.png"
+                    "image_url": "https://banner2.cleanpng.com/20180406/pfq/kisspng-logo-raivill-invent-green-circle-5ac79e639698a6.3860305315230316516169.jpg"
                 }
             ]
         }
