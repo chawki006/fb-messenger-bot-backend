@@ -249,7 +249,7 @@ def received_message(event, time):
                 Question.previous_answer_id == None).first()
             answers = list(map(lambda answer: (answer.answer, answer.id),
                            Answer.query.filter_by(question_id=question.id).all()))
-            send_quick_reply_message(sender_id, question.question,answers)
+            send_buttons_message(sender_id, question.question, answers)
             entry = Message(sender_id, recipient_id, time, message_text)
             db.session.add(entry)
             db.session.commit()
@@ -350,6 +350,36 @@ def send_quick_reply_message(recipient_id, question, replies):
         "message": {
             "text": question,
             "quick_replies": formated_replies
+        }
+    })
+
+    log("sending template with choices to {recipient}: ".format(
+        recipient=recipient_id))
+
+    call_send_api(message_data)
+
+
+def send_buttons_message(recipient_id, question, replies):
+    formated_replies = []
+    for reply in replies:
+        formated_replies.append({
+            "type": "postback",
+            "title": reply[0],
+            "payload": reply[1]
+        })
+    message_data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "message": {
+            "attachment": {
+                "type": "template",
+                "payload": {
+                    "template_type": "button",
+                    "text": question,
+                    "buttons": formated_replies
+                }
+            }
         }
     })
 
