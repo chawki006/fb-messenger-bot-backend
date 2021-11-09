@@ -243,7 +243,8 @@ def received_message(event, time):
             send_share_message(sender_id)
 
         else:  # default case
-            send_text_message(sender_id, "Echo: " + message_text)
+            # send_text_message(sender_id, "Echo: " + message_text)
+            send_quick_reply_message(sender_id)
             entry = Message(sender_id, recipient_id, time, message_text)
             db.session.add(entry)
             db.session.commit()
@@ -318,6 +319,35 @@ def send_generic_message(recipient_id, page_id):
                     "buttons": questions_buttons
                 }
             }
+        }
+    })
+
+    log("sending template with choices to {recipient}: ".format(
+        recipient=recipient_id))
+
+    call_send_api(message_data)
+
+
+def send_quick_reply_message(recipient_id):
+    message_data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "message": {
+            "text": "Pick a color:",
+            "quick_replies": [
+                {
+                    "content_type": "text",
+                    "title": "Red",
+                    "payload": "Red_PAYLOAD",
+                    "image_url": "http://example.com/img/red.png"
+                }, {
+                    "content_type": "text",
+                    "title": "Green",
+                    "payload": "Green_PAYLOAD",
+                    "image_url": "http://example.com/img/green.png"
+                }
+            ]
         }
     })
 
@@ -637,6 +667,7 @@ def set_persistent_menu(sender_id):
                       params=params, headers=headers, data=json.dumps(persMenu))
     print(r.content)
 
+
 def serialize_question(question):
     answers = []
     if not question:
@@ -666,7 +697,8 @@ def update_tree(question_tree, previous_answer_id):
                 Question.id == node["id"]).first()
             db.session.delete(question)
         else:
-            answer = db.session.query(Answer).filter(Answer.id == node["id"]).first()
+            answer = db.session.query(Answer).filter(
+                Answer.id == node["id"]).first()
             db.session.delete(answer)
     if question_tree.get("id"):
         Question.query.filter_by(id=int(question_tree["id"])).update(
