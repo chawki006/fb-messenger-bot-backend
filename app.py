@@ -255,7 +255,7 @@ def received_message(event, time):
             db.session.commit()
             my_user = FbUser.query.filter_by(user_id=sender_id).first()
             params = {
-                "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+                "access_token": os.environ["PAGE_ACCESS_TOKEN_{}".format(recipient_id)]
             }
             headers = {
                 "Content-Type": "application/json"
@@ -279,12 +279,12 @@ def received_message(event, time):
                 db.session.commit()
     elif "attachments" in event["message"]:
         message_attachments = event["message"]["attachments"]
-        send_text_message(sender_id, "Message with attachment received")
+        send_text_message(sender_id, "Message with attachment received", recipient_id)
     set_persistent_menu(sender_id)
 
 
 # Message event functions
-def send_text_message(recipient_id, message_text):
+def send_text_message(recipient_id, message_text, page_id):
 
     # encode('utf-8') included to log emojis to heroku logs
     log("sending message to {recipient}: {text}".format(
@@ -299,7 +299,7 @@ def send_text_message(recipient_id, message_text):
         }
     })
 
-    call_send_api(message_data)
+    call_send_api(message_data, page_id)
 
 
 def send_generic_message(recipient_id, page_id):
@@ -330,7 +330,7 @@ def send_generic_message(recipient_id, page_id):
     log("sending template with choices to {recipient}: ".format(
         recipient=recipient_id))
 
-    call_send_api(message_data)
+    call_send_api(message_data, recipient_id)
 
 
 def send_quick_reply_message(recipient_id, question, replies):
@@ -356,10 +356,10 @@ def send_quick_reply_message(recipient_id, question, replies):
     log("sending template with choices to {recipient}: ".format(
         recipient=recipient_id))
 
-    call_send_api(message_data)
+    call_send_api(message_data, recipient_id)
 
 
-def send_buttons_message(recipient_id, question, replies):
+def send_buttons_message(recipient_id, question, replies, page_id):
     formated_replies = []
     for reply in replies:
         formated_replies.append({
@@ -386,7 +386,7 @@ def send_buttons_message(recipient_id, question, replies):
     log("sending template with choices to {recipient}: ".format(
         recipient=recipient_id))
 
-    call_send_api(message_data)
+    call_send_api(message_data, page_id)
 
 
 def send_image_message(recipient_id):
@@ -407,7 +407,7 @@ def send_image_message(recipient_id):
 
     log("sending image to {recipient}: ".format(recipient=recipient_id))
 
-    call_send_api(message_data)
+    call_send_api(message_data, recipient_id)
 
 
 def send_file_message(recipient_id):
@@ -428,7 +428,7 @@ def send_file_message(recipient_id):
 
     log("sending file to {recipient}: ".format(recipient=recipient_id))
 
-    call_send_api(message_data)
+    call_send_api(message_data, recipient_id)
 
 
 def send_audio_message(recipient_id):
@@ -449,7 +449,7 @@ def send_audio_message(recipient_id):
 
     log("sending audio to {recipient}: ".format(recipient=recipient_id))
 
-    call_send_api(message_data)
+    call_send_api(message_data, recipient_id)
 
 
 def send_video_message(recipient_id):
@@ -470,7 +470,7 @@ def send_video_message(recipient_id):
 
     log("sending video to {recipient}: ".format(recipient=recipient_id))
 
-    call_send_api(message_data)
+    call_send_api(message_data, recipient_id)
 
 
 def send_button_message(recipient_id):
@@ -504,7 +504,7 @@ def send_button_message(recipient_id):
 
     log("sending button to {recipient}: ".format(recipient=recipient_id))
 
-    call_send_api(message_data)
+    call_send_api(message_data, recipient_id)
 
 
 def send_share_message(recipient_id):
@@ -539,7 +539,7 @@ def send_share_message(recipient_id):
 
     log("sending share button to {recipient}: ".format(recipient=recipient_id))
 
-    call_send_api(message_data)
+    call_send_api(message_data, recipient_id)
 
 
 def received_postback(event):
@@ -559,26 +559,26 @@ def received_postback(event):
     if payload == 'Get Started':
         # Get Started button was pressed
         send_text_message(
-            sender_id, "Welcome to the Asylex bot - Anything you type will be echoed back to you, except for the following keywords: image, file, audio, video, button, generic, share.")
+            sender_id, "Welcome to the Asylex bot - Anything you type will be echoed back to you, except for the following keywords: image, file, audio, video, button, generic, share.", recipient_id)
     elif payload == 'Payload for send_button_message()':
         send_text_message(
-            sender_id, "Welcome to the Asylex bot - Postback was called")
+            sender_id, "Welcome to the Asylex bot - Postback was called", recipient_id)
     else:
         next_question = Question.query.filter_by(
             previous_answer_id=int(payload)).first()
         if next_question:
             answers = list(map(lambda answer: (answer.answer, answer.id),
                                Answer.query.filter_by(question_id=next_question.id).all()))
-            send_buttons_message(sender_id, next_question.question, answers)
+            send_buttons_message(sender_id, next_question.question, answers, recipient_id)
         # Notify sender that postback was successful
         # send_text_message(sender_id, "Welcome to the Asylex bot - Anything you type will be echoed back to you, except for the following keywords: image, file, audio, video, button, generic, share.")
         set_persistent_menu(sender_id)
 
 
-def call_send_api(message_data):
+def call_send_api(message_data, page_id):
 
     params = {
-        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+        "access_token": os.environ["PAGE_ACCESS_TOKEN_{}".format(page_id)]
     }
     headers = {
         "Content-Type": "application/json"
@@ -604,7 +604,7 @@ def log(message):  # simple wrapper for logging to stdout on heroku
 # app = Flask(__name__)
 
 
-# bot = Bot(os.environ["PAGE_ACCESS_TOKEN"])
+# bot = Bot(os.environ["PAGE_ACCESS_TOKEN_{}".format(page_id)])
 PAGE_ACCESS_TOKEN = os.environ.get('PAGE_ACCESS_TOKEN')
 
 
@@ -695,7 +695,7 @@ def set_persistent_menu(sender_id):
         ]
     }
     params = {
-        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+        "access_token": os.environ["PAGE_ACCESS_TOKEN_{}".format(page_id)]
     }
     headers = {
         "Content-Type": "application/json"
