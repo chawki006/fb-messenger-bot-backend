@@ -280,7 +280,7 @@ def received_message(event, time):
     elif "attachments" in event["message"]:
         message_attachments = event["message"]["attachments"]
         send_text_message(sender_id, "Message with attachment received", recipient_id)
-    set_persistent_menu(sender_id)
+    #set_persistent_menu(sender_id)
 
 
 # Message event functions
@@ -572,7 +572,7 @@ def received_postback(event):
             send_buttons_message(sender_id, next_question.question, answers, recipient_id)
         # Notify sender that postback was successful
         # send_text_message(sender_id, "Welcome to the Asylex bot - Anything you type will be echoed back to you, except for the following keywords: image, file, audio, video, button, generic, share.")
-        set_persistent_menu(sender_id)
+        #set_persistent_menu(sender_id)
 
 
 def call_send_api(message_data, page_id):
@@ -771,7 +771,7 @@ def update_tree(question_tree, previous_answer_id):
 # 	sys.stdout.flush()
 
 
-# set_persistent_menu()
+# #set_persistent_menu()
 # set_greeting_text()
 if __name__ == "__main__":
     app.run(debug=True)
