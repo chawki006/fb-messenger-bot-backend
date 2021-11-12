@@ -112,12 +112,12 @@ def updatequestiontree():
         return "Question Doesn't have answers!", 400
     return "", 200
 
-
+@cross_origin()
 @app.route("/pagesget", methods=['GET'])
 def pagesget():
     pages = FbPage.query.all()
-    pages_ids = list(map(lambda page: page.page_id, pages))
-    return json.dumps(pages_ids)
+    pages_list = list(map(lambda page: (page.page_id, page.page_name) , pages))
+    return json.dumps(pages_list)
 
 
 @app.route("/workflows", methods=['GET'])
