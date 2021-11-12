@@ -249,7 +249,7 @@ def received_message(event, time):
                 Question.previous_answer_id == None).first()
             answers = list(map(lambda answer: (answer.answer, answer.id),
                            Answer.query.filter_by(question_id=question.id).all()))
-            send_buttons_message(sender_id, question.question, answers)
+            send_buttons_message(sender_id, question.question, answers, recipient_id)
             entry = Message(sender_id, recipient_id, time, message_text)
             db.session.add(entry)
             db.session.commit()
